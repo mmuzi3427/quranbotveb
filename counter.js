@@ -56,7 +56,7 @@ function decrementCounter() {
 
 // Reset
 function resetCounter() {
-  if (confirm("Hisobni 0 ga qaytarsinmi?")) {
+  if (confirm("Message by @Quroneshitingbot\nHisobni 0 ga qaytarish\nIshonchingiz komilmi? ")) {
     updateDisplay(0);
   }
 }
