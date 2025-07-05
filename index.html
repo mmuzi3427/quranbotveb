@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tasbih - Online Counter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="style.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container">
+    <h1 style="
+    color: white;
+    text-align:center;
+    padding: 5px;
+    margin-top: 5px;" class="tasbih">Tasbih</h1>
+    <div class="header">
+      <select class="select header-element" id="steps">
+        <option value="1" selected>+1</option>
+        <option value="2">+2</option>
+        <option value="5">+5</option>
+        <option value="10">+10</option>
+        <option value="33">+33</option>
+        <option value="100">+100</option>
+      </select>
+    </div>
+    <div class="header">
+        <button class="stilim header-element" id="resetter">Reset</button>
+    </div>
+
+    
+
+    <div class="buttons">
+        <div id="incrementor" class="chevron-up ripple"></div>
+        <div id="decrementor" class="chevron-down ripple"></div>
+    </div>
+    <div id="counterContainer" class="counter">
+      <input style="display: inline;" class="counter-input" type="number" id="counterInput" value="0">
+    </div>
+  </div>
+
+  <script src="counter.js"></script>
+</body>
+</html>
