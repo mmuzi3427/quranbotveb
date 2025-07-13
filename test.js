@@ -27,10 +27,10 @@ function doPost(e) {
       userSheet.appendRow([userId, new Date(), username, firstName]);
     }
 
-    sendMessage(userId, "🇺🇿 Tilni tanlang:\n🇷🇺 Выберите язык:\n🇬🇧 Choose your language", {
-      keyboard: [["🇺🇿 O‘zbek", "🇷🇺 Русский", "🇬🇧 English"]],
+    sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!`, {
+      keyboard: [["Kanal qoʻshish"], ["Post yuborish"]],
       one_time_keyboard: true,
-      resize_keyboard: true
+      resize_keyboard: false
     });
     return;
   }
@@ -56,7 +56,13 @@ function doPost(e) {
     });
     return;
   }
-
+  if (text !== "/start"){
+    if (text === "Kanal qoʻshish"){
+      sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...")
+    } else {
+      sendMessage(userId, text)
+    }
+  }
   if (!lang) return;
 
   const dictionary = {
