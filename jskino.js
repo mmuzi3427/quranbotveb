@@ -59,8 +59,8 @@ function sendMessage(chat_id, text) {
   });
 
   const req = https.request({
-    hostname: "https://api.telegram.org",
-    path: /bot${TOKEN}/sendMessage,
+    hostname: "api.telegram.org",
+    path: `/bot${TOKEN}/sendMessage`,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
