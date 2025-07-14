@@ -9,7 +9,8 @@ function doPost(e) {
   const firstName = contents.message?.from?.first_name;
   const username = contents.message?.from?.username;
   const text = contents.message?.text;
-  const newMember = contents.message?.new_chat_member;
+  const newMembersList = contents.chat_member;
+  
   const chatId = contents.message?.chat?.id;
 
   const jogChannelId = -1002659972280;
@@ -48,7 +49,7 @@ function doPost(e) {
   }
 
   // Yangi a’zo kanalga qo‘shilganda
-  if (newMember && chatId === mainChannelId) {
+  if (newMemberList && chatId === mainChannelId) {
     const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`;
     
     bot("sendMessage", {
