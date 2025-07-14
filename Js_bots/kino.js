@@ -44,32 +44,20 @@ function doPost(e) {
     sendMessage(userId, text)
   }
   if (newMember && chatId === mainChannelId) {
-    sendMessage(jogChannelId, `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, parse_mode = 'html', );
+    sendMessage(jogChannelId, `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, {
+      parse_mode: 'html'
+    }
+               );
   }
   if (newMember && chatId === mainChannelId) {
-     bot("sendMessage", jogChannelId, `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, parse_mode = 'html', );
+     bot("sendMessage", {
+       chat_id: jogChannelId, 
+       text: `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, 
+       parse_mode: 'html'
+     }
+        );
   }
 
-
-  // About Us
-  if (["Biz haqimizda", "О нас", "About us"].includes(text)) {
-    sendMessage(userId, dictionary.about[lang]);
-    return;
-  }
-
-  // Job list
-  if (["Bo‘sh ish o‘rinlari", "Вакансии", "Vacancies"].includes(text)) {
-    sendMessage(userId, {
-      uz: "Quyidagi kasblarni tanlang:",
-      ru: "Выберите профессию:",
-      en: "Choose a position:"
-    }[lang], {
-      keyboard: [dictionary.jobs],
-      one_time_keyboard: true,
-      resize_keyboard: true
-    });
-    return;
-  }
 
 // USER EXIST CHECK
 function isUserExist(sheet, userId) {
@@ -80,7 +68,7 @@ function isUserExist(sheet, userId) {
 
 //bot 
 function bot(method, data) {
-      fetch(`https://api.telegram.org/bot${botToken}/${method}`, {
+      fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -100,17 +88,19 @@ function bot(method, data) {
       });
 }
 // SEND MESSAGE
-function sendMessage(chatId, text, keyboard = null) {
+function sendMessage(chatId, text, options = {}) {
   const payload = {
     chat_id: chatId,
     text: text,
-    ...(keyboard && {
-      reply_markup: JSON.stringify({ 
-        keyboard: keyboard.keyboard || keyboard,
-        resize_keyboard: true 
-      }) 
-    })
+    ...options.keyboard && {
+      reply_markup: JSON.stringify({
+        keyboard: options.keyboard.keyboard || options.keyboard,
+        resize_keyboard: true
+      })
+    },
+    parse_mode: options.parse_mode || "HTML"
   };
+
   UrlFetchApp.fetch("https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage", {
     method: "post",
     contentType: "application/json",
