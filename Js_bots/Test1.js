@@ -25,7 +25,7 @@ function doPost(e) {
       userSheet.appendRow([userId, new Date(), username, firstName]);
     }
 
-    sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!`, {
+    sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!\nBot versiyasi v1.0`, {
       keyboard: [["Kanal qoʻshish"], ["Post yuborish"]],
       one_time_keyboard: true,
       resize_keyboard: false
