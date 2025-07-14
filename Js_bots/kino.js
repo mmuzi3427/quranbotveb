@@ -14,11 +14,12 @@ function doPost(e) {
   const userSheet = sheet.getSheetByName(SHEET_USERS);
   const appSheet = sheet.getSheetByName(SHEET_APPLICATIONS);
 
-  const langMap = {
-    '🇺🇿 O‘zbek': 'uz',
-    '🇷🇺 Русский': 'ru',
-    '🇬🇧 English': 'en'
-  };
+  const lefrtMember = contents.message?.left_chat_member;
+  const newMember = contents.message?.new_chat_member;
+  const chatId = contents.message?.chat.id;
+  const jogChannelId = -1002659972280;
+  const mainChannelId = -1002366968461
+  
 
   let lang = PropertiesService.getUserProperties().getProperty("lang_" + userId);
 
@@ -62,6 +63,12 @@ function doPost(e) {
     } else {
       sendMessage(userId, text)
     }
+  }
+  if (newMember && chatId === mainChannelId) {
+    sendMessage(jogChannelId, `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, parse_mode = 'html', );
+  }
+  if (newMember && chatId === mainChannelId) {
+     bot("sendMessage", jogChannelId, `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, parse_mode = 'html', );
   }
   if (!lang) return;
 
@@ -145,12 +152,39 @@ function isUserExist(sheet, userId) {
   return data.some(row => row[0] == userId);
 }
 
+
+//bot 
+function bot(method, data) {
+      fetch(`https://api.telegram.org/bot${botToken}/${method}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.ok) {
+          return true;
+        } else {
+          return false;
+        }
+      })
+      .catch(err => {
+        return false;
+      });
+}
 // SEND MESSAGE
 function sendMessage(chatId, text, keyboard = null) {
   const payload = {
     chat_id: chatId,
     text: text,
-    ...(keyboard && { reply_markup: JSON.stringify({ keyboard: keyboard.keyboard || keyboard, resize_keyboard: true }) })
+    ...(keyboard && {
+      reply_markup: JSON.stringify({ 
+        keyboard: keyboard.keyboard || keyboard,
+        resize_keyboard: true 
+      }) 
+    })
   };
   UrlFetchApp.fetch("https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage", {
     method: "post",
