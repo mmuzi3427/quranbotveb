@@ -80,7 +80,7 @@ function sendVideo(chat_id, videoUrl, caption = "") {
 
   const req = https.request({
     hostname: "api.telegram.org",
-    path: /bot${TOKEN}/sendVideo,
+    path: `/bot${TOKEN}/sendVideo`,
     method: "POST",
     headers: {
       "Content-Type": "application/json",
