@@ -1,0 +1,99 @@
+const TELEGRAM_TOKEN = "7649232976:AAGqc7Uqzi9Y1bvOl121Dt1Y11SE2Iv_9Aw";
+const SHEET_ID = "1XJTmtb3bmePZTMtt8jZSKL5stQXgbPbtDwVOpnZClQU";
+const SHEET_USERS = "List2";
+const SHEET_APPLICATIONS = "List1";
+
+function doPost(e) {
+  const contents = JSON.parse(e.postData.contents);
+  const userId = contents.message?.from?.id;
+  const firstName = contents.message?.from?.first_name;
+  const username = contents.message?.from?.username;
+  const text = contents.message?.text;
+  const newMember = contents.message?.new_chat_member;
+  const chatId = contents.message?.chat?.id;
+
+  const jogChannelId = -1002659972280;
+  const mainChannelId = -1002366968461;
+
+  const sheet = SpreadsheetApp.openById(SHEET_ID);
+  const userSheet = sheet.getSheetByName(SHEET_USERS);
+
+  // Start komandasi
+  if (text === "/start") {
+    if (!isUserExist(userSheet, userId)) {
+      userSheet.appendRow([userId, new Date(), username, firstName]);
+    }
+
+    sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!`, {
+      keyboard: [["Kanal qoʻshish"], ["Post yuborish"]],
+      one_time_keyboard: true,
+      resize_keyboard: false
+    });
+    return;
+  }
+
+  // "Kanal qoʻshish" tugmasi
+  if (text === "Kanal qoʻshish") {
+    sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...");
+    return;
+  }
+
+  // Boshqa matnlar
+  if (text) {
+    bot("sendMessage", {
+      chat_id: userId,
+      text: "Assalomu Alaykum"
+    });
+    return;
+  }
+
+  // Yangi a’zo kanalga qo‘shilganda
+  if (newMember && chatId === mainChannelId) {
+    const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`;
+    
+    bot("sendMessage", {
+      chat_id: jogChannelId,
+      text: welcomeText,
+      parse_mode: 'HTML'
+    });
+    return;
+  }
+}
+
+// USER EXIST CHECK
+function isUserExist(sheet, userId) {
+  const data = sheet.getDataRange().getValues();
+  return data.some(row => row[0] == userId);
+}
+
+// Telegram APIga so‘rov
+function bot(method, data) {
+  UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(data)
+  });
+}
+
+// Xabar yuborish
+function sendMessage(chatId, text, options = {}) {
+  const payload = {
+    chat_id: chatId,
+    text: text,
+    parse_mode: options.parse_mode || "HTML"
+  };
+
+  if (options.keyboard) {
+    payload.reply_markup = JSON.stringify({
+      keyboard: options.keyboard.keyboard || options.keyboard,
+      resize_keyboard: true
+    });
+  }
+
+  UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(payload)
+  });
+    }
+      
