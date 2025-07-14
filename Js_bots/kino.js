@@ -57,8 +57,7 @@ function doPost(e) {
      }
         );
   }
-
-
+}
 // USER EXIST CHECK
 function isUserExist(sheet, userId) {
   const data = sheet.getDataRange().getValues();
