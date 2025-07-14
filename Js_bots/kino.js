@@ -92,14 +92,15 @@ function sendMessage(chatId, text, options = {}) {
   const payload = {
     chat_id: chatId,
     text: text,
-    ...options.keyboard && {
-      reply_markup: JSON.stringify({
-        keyboard: options.keyboard.keyboard || options.keyboard,
-        resize_keyboard: true
-      })
-    },
     parse_mode: options.parse_mode || "HTML"
   };
+
+  if (options.keyboard) {
+    payload.reply_markup = JSON.stringify({
+      keyboard: options.keyboard.keyboard || options.keyboard,
+      resize_keyboard: true
+    });
+  }
 
   UrlFetchApp.fetch("https://api.telegram.org/bot" + TELEGRAM_TOKEN + "/sendMessage", {
     method: "post",
