@@ -37,25 +37,28 @@ function doPost(e) {
   }
   if (text !== "/start"){
     bot("sendMessage", userId, "Assalomu Alaykum")
-  }
-  if (text === "Kanal qoʻshish"){
-    sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...")
-  } else {
-    sendMessage(userId, text)
-  }
-  if (newMember && chatId === mainChannelId) {
-    sendMessage(jogChannelId, `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, {
-      parse_mode: 'html'
+    if (text === "Kanal qoʻshish"){
+      sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...")
+    } else {
+      sendMessage(userId, text)
     }
-               );
   }
-  if (newMember && chatId === mainChannelId) {
-     bot("sendMessage", {
-       chat_id: jogChannelId, 
-       text: `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, 
-       parse_mode: 'html'
-     }
-        );
+  if (!text){
+    if (newMember && chatId === mainChannelId) {
+      sendMessage(jogChannelId, `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, {
+        parse_mode: 'html'
+      }
+                 );
+    }
+    
+    if (newMember && chatId === mainChannelId) {
+       bot("sendMessage", {
+         chat_id: jogChannelId, 
+         text: `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`, 
+         parse_mode: 'html'
+       }
+          );
+    }
   }
 }
 // USER EXIST CHECK
