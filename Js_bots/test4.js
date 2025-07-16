@@ -23,47 +23,49 @@ function doPost(e) {
     const sheet = SpreadsheetApp.openById(SHEET_ID);
     const userSheet = sheet.getSheetByName(SHEET_USERS);
     const channels = sheet.getSheetByName(SHEET_CHANNELS);
-    // Start komandasi
-    if (isJoin(channels, chatId) === true) {
+
+    // Boshqa matnlar
+    if (text && isJoin(channels, chatId) === true) {
         if (text === "/start") {
             if (!isUserExist(userSheet, userId)) {
                 userSheet.appendRow([userId, new Date(), username, firstName]);
             }
-
-            sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!\nBot versiyasi v1.0`, {
-                keyboard: [["Kanal qoʻshish"], ["Post yuborish"]],
-                one_time_keyboard: true,
-                resize_keyboard: false
-            });
-            return;
-        }
-
-        // "Kanal qoʻshish" tugmasi
-        if (text === "Kanal qoʻshish") {
-            sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...");
-            return;
-        }
-
-        // Boshqa matnlar
-        if (text) {
             bot("sendMessage", {
                 chat_id: userId,
-                text: "Assalomu Alaykum"
+                text: `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!\nBot versiyasi v1.0`,
+                reply_markup: {
+                    keyboard: [
+                        ["Kanal qoʻshish"],
+                        ["Post yuborish"]
+                    ],
+                    one_time_keyboard: true,
+                    resize_keyboard: false
+                }
             });
             return;
-        }
-
-        // Yangi a’zo kanalga qo‘shilganda
-        if (newMembersList && chatId === mainChannelId) {
-            const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${memberId}">${memberName}</a>`;
-    
+        } else if (text === "Kanal qoʻshish") {
             bot("sendMessage", {
-                chat_id: jogChannelId,
-                text: welcomeText,
-                parse_mode: 'HTML'
+                chat_id: userId, 
+                text: "Ushbu boʻlim hozirda ta'mirda..."
             });
             return;
         }
+        bot("sendMessage", {
+            chat_id: userId,
+            text: "Assalomu Alaykum"
+        });
+        return;
+    }
+
+    // Yangi a’zo kanalga qo‘shilganda
+    if (newMembersList && chatId === mainChannelId) {
+        const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${memberId}">${memberName}</a>`;
+        bot("sendMessage", {
+            chat_id: jogChannelId,
+            text: welcomeText,
+            parse_mode: 'HTML'
+        });
+        return;
     }
 }
 
@@ -83,13 +85,6 @@ function isJoin(sheet, id) {
 
     for (let i = 0; i < channels.length; i++) {
         let url = channels[i];
-
-        // test uchun yuboramiz
-        bot("sendMessage", {
-            chat_id: id,
-            text: "Tekshirilmoqda: @" + url
-        });
-
         let nom = bot("getChat", { chat_id: "@" + url });
         let ism = nom?.title || url;
 
@@ -158,24 +153,3 @@ function bot(method, data) {
     return null;
   }
 }
-
-
-// Xabar yuborish
-function sendMessage(chatId, text, options = {}) {
-    const payload = {
-        chat_id: chatId,
-        text: text,
-        parse_mode: options.parse_mode || "HTML"
-    };
-    if (options.keyboard) {
-        payload.reply_markup = JSON.stringify({
-            keyboard: options.keyboard.keyboard || options.keyboard,
-            resize_keyboard: true
-        });
-    }
-    UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-        method: "post",
-        contentType: "application/json",
-        payload: JSON.stringify(payload)
-    });
-        }
