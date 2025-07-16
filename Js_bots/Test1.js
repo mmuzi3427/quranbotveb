@@ -81,15 +81,17 @@ function isJoin(sheet, id) {
     } else {
         for (let i = 0; i < channels.length; i++){
             let url = channels[i];
-            bot("sendMessage", {
-                chat_id: id,
-                text: String(url)
-            });
             let nom = bot("getChat", {chat_id: `@${url}`}, "get");
             bot("sendMessage", {
                 chat_id: id,
                 text: String(nom?.title)
             });
+            let nomObj = bot("getChat", { chat_id: "@" + url });
+            bot("sendMessage", {
+                chat_id: id,
+                text: JSON.stringify(nomObj, null, 2)
+            });
+            
             let ism = nom?.result?.title;
             let ret = JSON.parse(bot("getChatMember", {
                 chat_id: "@"+url,
