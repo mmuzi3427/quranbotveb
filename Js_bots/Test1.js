@@ -76,11 +76,16 @@ function isJoin(sheet, id) {
     const channels = Array(sheet.getDataRange().getValues()[0]); //["channnel1","channel2","channel3"]
     let buttons = [];
     let uns = false;
-    if (channels.length === 0 || channels === null){
+    let channels1 = channels[0]
+    if (channels1.length === 0 || channels1 === null){
         return true;
     } else {
         for (let i = 0; i < channels.length; i++){
-            let url = channels[i];
+            let url = channels1[i];
+            bot("sendMessage", {
+                chat_id: id,
+                text: url
+            })
             let nom = bot("getChat", {chat_id: `@${url}`});
             let ism = nom?.title;
             let ret = bot("getChatMember", {
