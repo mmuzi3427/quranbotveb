@@ -81,9 +81,11 @@ function isJoin(sheet, id) {
     } else {
         for (let i = 0; i < channels.length; i++){
             let url = channels[i];
-            let nom = JSON.parse(bot("getChat", {
-                chat_id: "@"+url,
-            }));
+            bot("sendMessage", {
+                chat_id: id,
+                text: String(url)
+            });
+            let nom = bot("getChat", {chat_id: `@${url}`}, "get");
             bot("sendMessage", {
                 chat_id: id,
                 text: String(nom)
@@ -133,9 +135,9 @@ function isJoin(sheet, id) {
 }
 
 // Telegram APIga so‘rov
-function bot(method, data) {
+function bot(method, data, type="post") {
     UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
-        method: "post",
+        method: type,
         contentType: "application/json",
         payload: JSON.stringify(data)
     });
