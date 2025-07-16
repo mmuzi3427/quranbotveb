@@ -23,7 +23,10 @@ function doPost(e) {
     const sheet = SpreadsheetApp.openById(SHEET_ID);
     const userSheet = sheet.getSheetByName(SHEET_USERS);
     const channels = sheet.getSheetByName(SHEET_CHANNELS);
-
+    //coolback
+    const call = contents.callback_query;
+    const cData = call?.data,
+    const cId = call?.message?.chat?.id,
     // Boshqa matnlar
     if (text && isJoin(channels, chatId) === true) {
         if (text === "/start") {
@@ -55,6 +58,14 @@ function doPost(e) {
             text: "Assalomu Alaykum"
         });
         return;
+    }
+    if (call){
+        if (isJoin(channels, chatId) === true){
+            bot("", {
+                chat_id: cId,
+                text: cData
+            })
+        }
     }
 
     // Yangi a’zo kanalga qo‘shilganda
