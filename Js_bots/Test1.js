@@ -76,7 +76,7 @@ function isJoin(sheet, id) {
   const channels = sheet.getDataRange().getValues(); //[["1","2","3"]]
   let buttons = [];
   let uns = false;
-  if (!channels){
+  if (channels = [[]]){
     return true;
   } else {
     for (let i = 0; i < channels[0].length; i++){
