@@ -75,7 +75,7 @@ function isUserExist(sheet, userId) {
 function isJoin(sheet, id) {
   const channels = sheet.getDataRange().getValues(); //[["1","2","3"]]
   let buttons = [];
-  let uns = null;
+  let uns = false;
   if (!channels){
     return true;
   } else {
@@ -84,12 +84,12 @@ function isJoin(sheet, id) {
       let nom = bot("getChat", {
         chat_id: "@"+url,
       });
-      let ism = nom?.title;
+      let ism = nom?.result?.title;
       let ret = bot("getChatMember", {
         chat_id: "@"+url,
         user_id: id,
       });
-      let status = ret?.status;
+      let status = ret?.result?.status;
       if (status !== "left"){
         buttons.push([
           {
