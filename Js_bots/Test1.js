@@ -2,6 +2,7 @@ const TELEGRAM_TOKEN = "7649232976:AAGqc7Uqzi9Y1bvOl121Dt1Y11SE2Iv_9Aw";
 const SHEET_ID = "1XJTmtb3bmePZTMtt8jZSKL5stQXgbPbtDwVOpnZClQU";
 const SHEET_USERS = "List2";
 const SHEET_APPLICATIONS = "List1";
+const SHEET_CHANNELS = "kanallar";
 
 function doPost(e) {
   const contents = JSON.parse(e.postData.contents);
@@ -21,46 +22,48 @@ function doPost(e) {
 
   const sheet = SpreadsheetApp.openById(SHEET_ID);
   const userSheet = sheet.getSheetByName(SHEET_USERS);
-
+  const channels = sheet.getSheetByName(SHEET_CHANNELS);
   // Start komandasi
-  if (text === "/start") {
-    if (!isUserExist(userSheet, userId)) {
-      userSheet.appendRow([userId, new Date(), username, firstName]);
+  if (isJoin(channels, chatId) === true) {
+    if (text === "/start") {
+      if (!isUserExist(userSheet, userId)) {
+        userSheet.appendRow([userId, new Date(), username, firstName]);
+      }
+
+      sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!\nBot versiyasi v1.0`, {
+        keyboard: [["Kanal qoʻshish"], ["Post yuborish"]],
+        one_time_keyboard: true,
+        resize_keyboard: false
+      });
+      return;
     }
 
-    sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!\nBot versiyasi v1.0`, {
-      keyboard: [["Kanal qoʻshish"], ["Post yuborish"]],
-      one_time_keyboard: true,
-      resize_keyboard: false
-    });
-    return;
-  }
+    // "Kanal qoʻshish" tugmasi
+    if (text === "Kanal qoʻshish") {
+      sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...");
+      return;
+    }
 
-  // "Kanal qoʻshish" tugmasi
-  if (text === "Kanal qoʻshish") {
-    sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...");
-    return;
-  }
+    // Boshqa matnlar
+    if (text) {
+      bot("sendMessage", {
+        chat_id: userId,
+        text: "Assalomu Alaykum"
+      });
+      return;
+    }
 
-  // Boshqa matnlar
-  if (text) {
-    bot("sendMessage", {
-      chat_id: userId,
-      text: "Assalomu Alaykum"
-    });
-    return;
-  }
-
-  // Yangi a’zo kanalga qo‘shilganda
-  if (newMemberList && chatId === mainChannelId) {
-    const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${memberId}">${memberName}</a>`;
+    // Yangi a’zo kanalga qo‘shilganda
+    if (newMemberList && chatId === mainChannelId) {
+      const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${memberId}">${memberName}</a>`;
     
-    bot("sendMessage", {
-      chat_id: jogChannelId,
-      text: welcomeText,
-      parse_mode: 'HTML'
-    });
-    return;
+      bot("sendMessage", {
+        chat_id: jogChannelId,
+        text: welcomeText,
+        parse_mode: 'HTML'
+      });
+      return;
+    }
   }
 }
 
@@ -68,6 +71,60 @@ function doPost(e) {
 function isUserExist(sheet, userId) {
   const data = sheet.getDataRange().getValues();
   return data.some(row => row[0] == userId);
+}
+function isJoin(sheet, id) {
+  const channels = sheet.getDataRange().getValues(); //[["1","2","3"]]
+  let buttons = [];
+  let uns = null;
+  if (!channels){
+    return true;
+  } else {
+    for (let i = 0; i <= channels[0].length-1; i++){
+      let url = channels[0][i];
+      let ism = bot("getChat", [
+        chat_id: "@"+url,
+      ]).title;
+      let ret = bot("getChatMember", [
+        chat_id: "@"+url,
+        user_id: id,
+      ]);
+      let status = ret.status;
+      if (status !== "left"){
+        buttons.push([
+          {
+            text: "✅" + ism,
+            url: "https://t.me/" + url
+          }
+        ])
+      } else {
+        buttons.push([
+          {
+            text: "❌" + ism,
+            url: "https://t.me/" + url
+          }
+        ])
+        uns = true;
+      }
+    }
+    buttons.push([
+          {
+            text: "Tekshirish ✅",
+            callback_data: "check"
+          }
+        ])
+  }
+  let array = {inline_keyboard: buttons};
+  if (uns === true){
+    bot("sendMessage", [
+      chat_id: id,
+      text: `<b>⚠️ Botdan to'liq foydalanish uchun quyidagi kanallarimizga obuna bo'ling!</b>`,
+      parse_mode: 'html',
+      reply_markup: array
+    ]);
+    return false;
+  } else {
+    return true;
+  }
 }
 
 // Telegram APIga so‘rov
