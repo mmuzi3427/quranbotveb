@@ -54,7 +54,7 @@ function doPost(e) {
     }
 
     // Yangi a’zo kanalga qo‘shilganda
-    if (newMemberList && chatId === mainChannelId) {
+    if (newMembersList && chatId === mainChannelId) {
       const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${memberId}">${memberName}</a>`;
     
       bot("sendMessage", {
@@ -84,12 +84,12 @@ function isJoin(sheet, id) {
       let nom = bot("getChat", {
         chat_id: "@"+url,
       });
-      let ism = nom.title;
+      let ism = nom?.title;
       let ret = bot("getChatMember", {
         chat_id: "@"+url,
         user_id: id,
       });
-      let status = ret.status;
+      let status = ret?.status;
       if (status !== "left"){
         buttons.push([
           {
