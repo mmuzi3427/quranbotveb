@@ -60,7 +60,7 @@ function doPost(e) {
         return;
     }
     if (call){
-        if (isJoin(channels, chatId) === true){
+        if (isJoin(channels, cId) === true){
             bot("sendMessage", {
                 chat_id: cId,
                 text: cData
