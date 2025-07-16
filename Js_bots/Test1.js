@@ -9,7 +9,10 @@ function doPost(e) {
   const firstName = contents.message?.from?.first_name;
   const username = contents.message?.from?.username;
   const text = contents.message?.text;
+  //kanalga qoʻshilgan yoki chiqqandagi ma'lumotlar
   const newMembersList = contents.chat_member;
+  const memberId = newMembersList?.user?.id;
+  const memberName = newMembersList?.user?.first_name;
   
   const chatId = contents.message?.chat?.id;
 
@@ -50,7 +53,7 @@ function doPost(e) {
 
   // Yangi a’zo kanalga qo‘shilganda
   if (newMemberList && chatId === mainChannelId) {
-    const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${userId}">${firstName}</a>`;
+    const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${memberId}">${memberName}</a>`;
     
     bot("sendMessage", {
       chat_id: jogChannelId,
