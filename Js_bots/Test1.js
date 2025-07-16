@@ -76,11 +76,11 @@ function isJoin(sheet, id) {
     const channels = sheet.getDataRange().getValues()[0]; //["channnel1","channel2","channel3"]
     let buttons = [];
     let uns = false;
-    if (channels === [] || channels === null){
+    if (channels.length === 0 || channels === null){
         return true;
     } else {
-        for (let i = 0; i < channels[0].length; i++){
-            let url = channels[0][i];
+        for (let i = 0; i < channels.length; i++){
+            let url = channels[i];
             let nom = bot("getChat", {
                 chat_id: "@"+url,
             });
@@ -89,73 +89,70 @@ function isJoin(sheet, id) {
                 chat_id: "@"+url,
                 user_id: id,
             });
-      let status = ret?.result?.status;
-      if (status !== "left"){
+            let status = ret?.result?.status;
+            if (status !== "left"){
+                buttons.push([
+                    {
+                        text: "✅ " + ism,
+                        url: "https://t.me/" + url
+                    }
+                ])
+            } else {
+                buttons.push([
+                    {
+                        text: "❌ " + ism,
+                        url: "https://t.me/" + url
+                    }
+                ])
+                uns = true;
+            }
+        }
         buttons.push([
-          {
-            text: "✅" + ism,
-            url: "https://t.me/" + url
-          }
+            {
+                text: "Tekshirish ✅",
+                callback_data: "check"
+            }
         ])
-      } else {
-        buttons.push([
-          {
-            text: "❌" + ism,
-            url: "https://t.me/" + url
-          }
-        ])
-        uns = true;
-      }
     }
-    buttons.push([
-          {
-            text: "Tekshirish ✅",
-            callback_data: "check"
-          }
-        ])
-  }
-  let array = {inline_keyboard: buttons};
-  if (uns === true){
-    bot("sendMessage", {
-      chat_id: id,
-      text: `<b>⚠️ Botdan to'liq foydalanish uchun quyidagi kanallarimizga obuna bo'ling!</b>`,
-      parse_mode: 'html',
-      reply_markup: array
-    });
-    return false;
-  } else {
-    return true;
-  }
+    let arr = {inline_keyboard: buttons};
+    if (uns === true){
+        bot("sendMessage", {
+            chat_id: id,
+            text: `<b>⚠️ Botdan to'liq foydalanish uchun quyidagi kanallarimizga obuna bo'ling!</b>`,
+            parse_mode: 'html',
+            reply_markup: arr
+        });
+        return false;
+    } else {
+        return true;
+    }
 }
 
 // Telegram APIga so‘rov
 function bot(method, data) {
-  UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
-    method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify(data)
-  });
+    UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
+        method: "post",
+        contentType: "application/json",
+        payload: JSON.stringify(data)
+    });
 }
 
 // Xabar yuborish
 function sendMessage(chatId, text, options = {}) {
-  const payload = {
-    chat_id: chatId,
-    text: text,
-    parse_mode: options.parse_mode || "HTML"
-  };
-
-  if (options.keyboard) {
-    payload.reply_markup = JSON.stringify({
-      keyboard: options.keyboard.keyboard || options.keyboard,
-      resize_keyboard: true
-    });
-  }
-
-  UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
-    method: "post",
-    contentType: "application/json",
-    payload: JSON.stringify(payload)
-  });
+    const payload = {
+        chat_id: chatId,
+        text: text,
+        parse_mode: options.parse_mode || "HTML"
+    };
+    if (options.keyboard) {
+        payload.reply_markup = JSON.stringify({
+            keyboard: options.keyboard.keyboard || options.keyboard,
+            resize_keyboard: true
+        });
     }
-      
+    UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
+        method: "post",
+        contentType: "application/json",
+        payload: JSON.stringify(payload)
+    });
+}
