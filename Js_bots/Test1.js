@@ -73,7 +73,7 @@ function isUserExist(sheet, userId) {
     return data.some(row => row[0] == userId);
 }
 function isJoin(sheet, id) {
-    const channels = sheet.getDataRange().getValues()[0]; //["channnel1","channel2","channel3"]
+    const channels = Array(sheet.getDataRange().getValues()[0]); //["channnel1","channel2","channel3"]
     let buttons = [];
     let uns = false;
     if (channels.length === 0 || channels === null){
@@ -81,14 +81,18 @@ function isJoin(sheet, id) {
     } else {
         for (let i = 0; i < channels.length; i++){
             let url = channels[i];
-            let nom = bot("getChat", {
+            let nom = JSON.parse(bot("getChat", {
                 chat_id: "@"+url,
+            }));
+            bot("sendMessage", {
+                chat_id: id,
+                text: String(nom)
             });
             let ism = nom?.result?.title;
-            let ret = bot("getChatMember", {
+            let ret = JSON.parse(bot("getChatMember", {
                 chat_id: "@"+url,
                 user_id: id,
-            });
+            }));
             let status = ret?.result?.status;
             if (status !== "left"){
                 buttons.push([
