@@ -25,8 +25,8 @@ function doPost(e) {
     const channels = sheet.getSheetByName(SHEET_CHANNELS);
     //coolback
     const call = contents.callback_query;
-    const cData = call?.data,
-    const cId = call?.message?.chat?.id,
+    const cData = call?.data;
+    const cId = call?.message?.chat?.id;
     // Boshqa matnlar
     if (text && isJoin(channels, chatId) === true) {
         if (text === "/start") {
