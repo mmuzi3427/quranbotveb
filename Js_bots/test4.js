@@ -65,6 +65,7 @@ function doPost(e) {
                 chat_id: cId,
                 text: cData
             })
+            return;
         }
     }
 
