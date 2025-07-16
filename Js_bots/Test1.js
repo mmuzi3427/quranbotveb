@@ -5,90 +5,90 @@ const SHEET_APPLICATIONS = "List1";
 const SHEET_CHANNELS = "kanallar";
 
 function doPost(e) {
-  const contents = JSON.parse(e.postData.contents);
-  const userId = contents.message?.from?.id;
-  const firstName = contents.message?.from?.first_name;
-  const username = contents.message?.from?.username;
-  const text = contents.message?.text;
-  //kanalga qoʻshilgan yoki chiqqandagi ma'lumotlar
-  const newMembersList = contents.chat_member;
-  const memberId = newMembersList?.user?.id;
-  const memberName = newMembersList?.user?.first_name;
+    const contents = JSON.parse(e.postData.contents);
+    const userId = contents.message?.from?.id;
+    const firstName = contents.message?.from?.first_name;
+    const username = contents.message?.from?.username;
+    const text = contents.message?.text;
+    //kanalga qoʻshilgan yoki chiqqandagi ma'lumotlar
+    const newMembersList = contents.chat_member;
+    const memberId = newMembersList?.user?.id;
+    const memberName = newMembersList?.user?.first_name;
   
-  const chatId = contents.message?.chat?.id;
+    const chatId = contents.message?.chat?.id;
 
-  const jogChannelId = -1002659972280;
-  const mainChannelId = -1002366968461;
+    const jogChannelId = -1002659972280;
+    const mainChannelId = -1002366968461;
 
-  const sheet = SpreadsheetApp.openById(SHEET_ID);
-  const userSheet = sheet.getSheetByName(SHEET_USERS);
-  const channels = sheet.getSheetByName(SHEET_CHANNELS);
-  // Start komandasi
-  if (isJoin(channels, chatId) === true) {
-    if (text === "/start") {
-      if (!isUserExist(userSheet, userId)) {
-        userSheet.appendRow([userId, new Date(), username, firstName]);
-      }
+    const sheet = SpreadsheetApp.openById(SHEET_ID);
+    const userSheet = sheet.getSheetByName(SHEET_USERS);
+    const channels = sheet.getSheetByName(SHEET_CHANNELS);
+    // Start komandasi
+    if (isJoin(channels, chatId) === true) {
+        if (text === "/start") {
+            if (!isUserExist(userSheet, userId)) {
+                userSheet.appendRow([userId, new Date(), username, firstName]);
+            }
 
-      sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!\nBot versiyasi v1.0`, {
-        keyboard: [["Kanal qoʻshish"], ["Post yuborish"]],
-        one_time_keyboard: true,
-        resize_keyboard: false
-      });
-      return;
-    }
+            sendMessage(userId, `Assalomu Alaykum hurmatli ${firstName} kanal yordamchi botiga xush kelibsiz!\nBot versiyasi v1.0`, {
+                keyboard: [["Kanal qoʻshish"], ["Post yuborish"]],
+                one_time_keyboard: true,
+                resize_keyboard: false
+            });
+            return;
+        }
 
-    // "Kanal qoʻshish" tugmasi
-    if (text === "Kanal qoʻshish") {
-      sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...");
-      return;
-    }
+        // "Kanal qoʻshish" tugmasi
+        if (text === "Kanal qoʻshish") {
+            sendMessage(userId, "Ushbu boʻlim hozirda ta'mirda...");
+            return;
+        }
 
-    // Boshqa matnlar
-    if (text) {
-      bot("sendMessage", {
-        chat_id: userId,
-        text: "Assalomu Alaykum"
-      });
-      return;
-    }
+        // Boshqa matnlar
+        if (text) {
+            bot("sendMessage", {
+                chat_id: userId,
+                text: "Assalomu Alaykum"
+            });
+            return;
+        }
 
-    // Yangi a’zo kanalga qo‘shilganda
-    if (newMembersList && chatId === mainChannelId) {
-      const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${memberId}">${memberName}</a>`;
+        // Yangi a’zo kanalga qo‘shilganda
+        if (newMembersList && chatId === mainChannelId) {
+            const welcomeText = `Kanalimizga qoʻshildi: <a href="tg://user?id=${memberId}">${memberName}</a>`;
     
-      bot("sendMessage", {
-        chat_id: jogChannelId,
-        text: welcomeText,
-        parse_mode: 'HTML'
-      });
-      return;
+            bot("sendMessage", {
+                chat_id: jogChannelId,
+                text: welcomeText,
+                parse_mode: 'HTML'
+            });
+            return;
+        }
     }
-  }
 }
 
 // USER EXIST CHECK
 function isUserExist(sheet, userId) {
-  const data = sheet.getDataRange().getValues();
-  return data.some(row => row[0] == userId);
+    const data = sheet.getDataRange().getValues();
+    return data.some(row => row[0] == userId);
 }
 function isJoin(sheet, id) {
-  const channels = sheet.getDataRange().getValues(); //[["1","2","3"]]
-  let buttons = [];
-  let uns = false;
-  if (channels = [[]]){
-    return true;
-  } else {
-    for (let i = 0; i < channels[0].length; i++){
-      let url = channels[0][i];
-      let nom = bot("getChat", {
-        chat_id: "@"+url,
-      });
-      let ism = nom?.result?.title;
-      let ret = bot("getChatMember", {
-        chat_id: "@"+url,
-        user_id: id,
-      });
+    const channels = sheet.getDataRange().getValues()[0]; //["channnel1","channel2","channel3"]
+    let buttons = [];
+    let uns = false;
+    if (channels === [] || channels === null){
+        return true;
+    } else {
+        for (let i = 0; i < channels[0].length; i++){
+            let url = channels[0][i];
+            let nom = bot("getChat", {
+                chat_id: "@"+url,
+            });
+            let ism = nom?.result?.title;
+            let ret = bot("getChatMember", {
+                chat_id: "@"+url,
+                user_id: id,
+            });
       let status = ret?.result?.status;
       if (status !== "left"){
         buttons.push([
