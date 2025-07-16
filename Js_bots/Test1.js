@@ -88,7 +88,7 @@ function isJoin(sheet, id) {
             let nom = bot("getChat", {chat_id: `@${url}`}, "get");
             bot("sendMessage", {
                 chat_id: id,
-                text: String(nom)
+                text: String(nom?.title)
             });
             let ism = nom?.result?.title;
             let ret = JSON.parse(bot("getChatMember", {
