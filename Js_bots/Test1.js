@@ -81,9 +81,10 @@ function isJoin(sheet, id) {
   } else {
     for (let i = 0; i <= channels[0].length-1; i++){
       let url = channels[0][i];
-      let ism = bot("getChat", [
+      let nom = bot("getChat", [
         chat_id: "@"+url,
-      ]).title;
+      ]);
+      let ism = nom.title;
       let ret = bot("getChatMember", [
         chat_id: "@"+url,
         user_id: id,
