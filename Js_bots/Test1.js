@@ -81,16 +81,12 @@ function isJoin(sheet, id) {
     } else {
         for (let i = 0; i < channels.length; i++){
             let url = channels[i];
-            let nom = bot("getChat", {chat_id: `@${url}`}, "get");
+            let nom = bot("getChat", {chat_id: `@${url}`});
             bot("sendMessage", {
                 chat_id: id,
                 text: String(nom?.title)
             });
-            let nomObj = bot("getChat", { chat_id: "@" + url });
-            bot("sendMessage", {
-                chat_id: id,
-                text: JSON.stringify(nomObj, null, 2)
-            });
+            
             
             let ism = nom?.result?.title;
             let ret = JSON.parse(bot("getChatMember", {
@@ -137,13 +133,24 @@ function isJoin(sheet, id) {
 }
 
 // Telegram APIga so‘rov
-function bot(method, data, type="post") {
-    UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
-        method: type,
-        contentType: "application/json",
-        payload: JSON.stringify(data)
-    });
+function bot(method, data) {
+  const res = UrlFetchApp.fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/${method}`, {
+    method: "post",
+    contentType: "application/json",
+    payload: JSON.stringify(data)
+  });
+
+  const json = JSON.parse(res.getContentText());
+
+  // Natijani qaytarish
+  if (json.ok) return json.result;
+  else {
+    // Hatolik bo‘lsa, konsolga chiqarish (Logs)
+    Logger.log(json);
+    return null;
+  }
 }
+
 
 // Xabar yuborish
 function sendMessage(chatId, text, options = {}) {
