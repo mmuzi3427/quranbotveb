@@ -81,14 +81,14 @@ function isJoin(sheet, id) {
   } else {
     for (let i = 0; i <= channels[0].length-1; i++){
       let url = channels[0][i];
-      let nom = bot("getChat", [
+      let nom = bot("getChat", {
         chat_id: "@"+url,
-      ]);
+      });
       let ism = nom.title;
-      let ret = bot("getChatMember", [
+      let ret = bot("getChatMember", {
         chat_id: "@"+url,
         user_id: id,
-      ]);
+      });
       let status = ret.status;
       if (status !== "left"){
         buttons.push([
@@ -116,12 +116,12 @@ function isJoin(sheet, id) {
   }
   let array = {inline_keyboard: buttons};
   if (uns === true){
-    bot("sendMessage", [
+    bot("sendMessage", {
       chat_id: id,
       text: `<b>⚠️ Botdan to'liq foydalanish uchun quyidagi kanallarimizga obuna bo'ling!</b>`,
       parse_mode: 'html',
       reply_markup: array
-    ]);
+    });
     return false;
   } else {
     return true;
