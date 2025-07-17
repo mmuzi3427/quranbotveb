@@ -27,7 +27,21 @@ function doPost(e) {
     const call = contents.callback_query;
     const cData = call?.data;
     const cId = call?.message?.chat?.id;
-    // Boshqa matnlar
+    const callback = contents?.callback_query;
+    const data = callback?.data;
+    const callid = callback?.id;
+    const ccid = callback?.message?.chat?.id;
+    const cmid = callback?.message?.message_id;
+    const from_id = contents?.message?.from?.id;
+    const message_id = callback?.message?.message_id;
+    const callcid = contents?.callback_query?.message?.chat?.id;
+    const doc = contents?.message?.document;
+    const doc_id = doc?.file_id;
+    const cqid = contents?.callback_query?.id;
+    const botdel = contents?.my_chat_member?.new_chat_member; 
+    const botdelid = contents?.my_chat_member?.from?.id;
+    const status= botdel?.status;
+    const callfrid = contents?.callback_query?.from?.id;
     if (text && isJoin(channels, chatId) === true) {
         if (text === "/start") {
             if (!isUserExist(userSheet, userId)) {
@@ -60,12 +74,19 @@ function doPost(e) {
         return;
     }
     if (call){
-        if (isJoin(channels, cId) === true){
+        if (isJoin(channels, cId, false) === true){
             bot("sendMessage", {
                 chat_id: cId,
                 text: cData
             })
             return;
+        } else {
+            bot("answerCallbackQuery", {
+                callback_query_id: callid,
+                text: "⚡ Barcha kanallarga obuna boʻlishingiz shart 🔔\n    Aks holda botimizda foydalana olmaysiz ❌",
+                show_alert: true
+            });
+            
         }
     }
 
@@ -86,7 +107,7 @@ function isUserExist(sheet, userId) {
     const data = sheet.getDataRange().getValues();
     return data.some(row => row[0] == userId);
 }
-function isJoin(sheet, id) {
+function isJoin(sheet, id, can_send = true) {
     const channels = sheet.getDataRange().getValues()[0]; // ✅ to‘g‘ri massiv
     let buttons = [];
     let uns = false;
@@ -134,13 +155,16 @@ function isJoin(sheet, id) {
     const arr = { inline_keyboard: buttons };
 
     if (uns === true) {
-        bot("sendMessage", {
-            chat_id: id,
-            text: `<b>⚠️ Botdan to'liq foydalanish uchun quyidagi kanallarimizga obuna bo'ling!</b>`,
-            parse_mode: 'html',
-            reply_markup: arr
-        });
+        if (can_send){
+            bot("sendMessage", {
+                chat_id: id,
+                text: `<b>⚠️ Botdan to'liq foydalanish uchun quyidagi kanallarimizga obuna bo'ling!</b>`,
+                parse_mode: 'html',
+                reply_markup: arr
+            });
+        }
         return false;
+    }
     } else {
         return true;
     }
