@@ -164,7 +164,6 @@ function isJoin(sheet, id, can_send = true) {
             });
         }
         return false;
-    }
     } else {
         return true;
     }
