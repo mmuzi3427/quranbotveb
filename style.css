@@ -275,6 +275,8 @@ input[type=number] {
     background-color: var(--accent-darker);
     box-shadow: 3px 5px 0 #8AFF00;
     border-color: var(--accent-darker);
+    transform: translateY(-4px);
+    transform: translateX(-4px);
     }
 .ripple:hover {
     background-color: var(--accent-darker);
@@ -287,6 +289,8 @@ input[type=number] {
     background-size: 100%;
     box-shadow: 0 0 0;
     transition: 0s;
+    transform: translateY(4px);
+    transform: translateX(4px);
 }
 
 @keyframes ripple {
