@@ -1,0 +1,11 @@
+<div>
+  <p>Ko‘rishlar soni: <span id="views">0</span></p>
+</div>
+
+<script>
+fetch('https://api.countapi.xyz/hit/mysite.com/blog')
+.then(res => res.json())
+.then(data => {
+    document.getElementById('views').textContent = data.value;
+});
+</script>
